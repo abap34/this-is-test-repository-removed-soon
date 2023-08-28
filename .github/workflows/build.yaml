@@ -3,7 +3,7 @@ name: Page Build by ALMO
 on:
     create:
         paths:
-            - 'posts/**/*.md'
+            - 'posts/**'
 
 jobs:
   build:
@@ -40,7 +40,7 @@ jobs:
           cd ${{ github.workspace }}
           git config --global user.email "actions@example.com"
           git config --global user.name "GitHub Actions"
-          git add posts/*.html
+          git add public/posts/*.html
           git commit -m "Add generated HTML files"
       
       - name: Push changes
