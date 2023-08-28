@@ -1,9 +1,9 @@
 name: Page Build by ALMO
 
 on:
-    create:
-        paths:
-            - 'posts/**'
+    push:
+      branches:
+        - main
 
 jobs:
   build:
@@ -29,10 +29,11 @@ jobs:
       - name: Generate HTML for New Markdown Files
         run: |
           cd ${{ github.workspace }}
-          for file in $(git diff-tree --no-commit-id --name-only -r ${{ github.sha }} | grep 'posts/' | grep '.md$'); do
-            filename=$(basename -- "$file")
-            filename_without_extension="${filename%.*}"
-            ./ALMO/src/almo "$file" > "public/posts/${filename_without_extension}.html"
+          for file in $(git diff --name-only HEAD~1); do
+            if [[ $file == *.md ]]; then
+              echo "Generating HTML for $file"
+              ./ALMO/src/almo "$file" > "public/posts/${filename_without_extension}.html"
+            fi
           done
 
       - name: Commit and Push HTML Files
