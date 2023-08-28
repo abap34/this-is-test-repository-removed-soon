@@ -27,16 +27,12 @@ jobs:
           cd ALMO/src
           g++ -std=c++20 -o almo almo.cpp -lcurl
 
-      - name: List added files
-        run: |
-          git diff --name-only ${{ github.event.before }} ${{ github.sha }} >> added_files.txt
-          cat added_files.txt
-        
+
       - name: Generate HTML Files
         run: |
-          cd ALMO/src
-          for file in $(cat ../../added_files.txt); do
-          ./almo "$file" > "public/posts/${filename_without_extension}.html  
+          cd ${{ github.workspace }}
+          for file in [public/posts/*.md]
+            ALMO/src/almo "$file" > "public/posts/${filename_without_extension}.html  
           done
 
       - name: Commit and Push HTML Files
