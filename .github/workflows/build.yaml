@@ -31,7 +31,7 @@ jobs:
       - name: Generate HTML Files
         run: |
           cd ${{ github.workspace }}
-          for file in [public/posts/*.md]
+          for file in [public/posts/*.md]; do
             ALMO/src/almo "$file" > "public/posts/${filename_without_extension}.html  
           done
 
