@@ -16,6 +16,7 @@ jobs:
       - name: Clone ALMO Repository
         run: git clone https://github.com/abap34/ALMO
 
+
       - name: Install g++ and libcurl
         run: |
           sudo apt-get update
@@ -26,18 +27,19 @@ jobs:
           cd ALMO/src
           g++ -std=c++20 -o almo almo.cpp -lcurl
 
-      - name: Generate HTML for New Markdown Files
+      - name: Get list of added files
+        id: diff
         run: |
-          cd ${{ github.workspace }}
-          for file in $(git diff --name-only HEAD~1); do
-          echo "Processing $file"
-            if [[ $file == *.md ]]; then
-              echo "Generating HTML for $file"
-              ./ALMO/src/almo "$file" > "public/posts/${filename_without_extension}.html"
-            else
-              echo "Skipping $file"
-            fi
+          git diff --name-status ${{ github.event.before }} ${{ github.sha }} | grep '^A' | cut -f2-
+          echo "::set-output name=added_files::$(git diff --name-only ${{ github.event.before }} ${{ github.sha }} | grep '^A')"
+        
+      - name: Process added files
+        run: |
+          added_files="${{ steps.diff.outputs.added_files }}"
+          for file in $added_files; do
+            ./ALMO/src/almo "$file" > "public/posts/${filename_without_extension}.html  
           done
+
 
       - name: Commit and Push HTML Files
         run: |
