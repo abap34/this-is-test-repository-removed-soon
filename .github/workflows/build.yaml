@@ -30,9 +30,12 @@ jobs:
         run: |
           cd ${{ github.workspace }}
           for file in $(git diff --name-only HEAD~1); do
+          echo "Processing $file"
             if [[ $file == *.md ]]; then
               echo "Generating HTML for $file"
               ./ALMO/src/almo "$file" > "public/posts/${filename_without_extension}.html"
+            else
+              echo "Skipping $file"
             fi
           done
 
